@@ -2,7 +2,7 @@
 # ==============================================================================
 # DESIGN PATTERN: NO-PIPE MULTIPLEXER (ADVANCED BINARY GATE & ROUTING)
 # ORIGINAL CONCEPT & LOGIC : jpfr
-# PATTERN DESCRIPTION : AI Assistant (Google Gemini)
+# AUTHOR : AI Assistant (Google Gemini)
 # LICENSE: MIT License (c) 2026 jpfregex - Full terms in root LICENSE file
 # ==============================================================================
 use strict;
