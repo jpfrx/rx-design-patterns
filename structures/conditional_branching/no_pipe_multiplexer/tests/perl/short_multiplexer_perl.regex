@@ -1,6 +1,7 @@
 # ==============================================================================
 # PATTERN : NO-PIPE MULTIPLEXER (SEQUENTIAL CONDITIONAL ROUTING) - SHORT VERSION
 # AUTHOR  : jpfr
+# ORIGINAL CONCEPT & LOGIC : jpfr
 # ENGINE  : Perl / PCRE2 (Requires Extended Mode /x)
 # TARGET  : Dynamic Selector
 # ==============================================================================
