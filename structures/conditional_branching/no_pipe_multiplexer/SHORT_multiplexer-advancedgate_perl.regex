@@ -21,12 +21,13 @@
 
 (?x) # Enable extended mode to allow whitespace and comments
 (?:
+  (?<![0-2]) # prevents empty <i> (deterministic)
   (?<i>
     (?<i0> (?<!\d) 0 (?!\d) )?
     (?<i1> (?<!\d) 1 (?!\d) )?
     (?<i2> (?<!\d) 2 (?!\d) )?
   )
-  (?<=[0-2]) # deterministic garantee <i> pattern captured or return false
+  (?<=[0-2]) # garantee <i> pattern captured or return false
   |
   [3-9] # else condition
 )
