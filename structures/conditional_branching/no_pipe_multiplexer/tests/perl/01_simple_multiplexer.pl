@@ -1,8 +1,9 @@
 #!/usr/bin/env perl
 # ==============================================================================
 # DESIGN PATTERN: NO-PIPE MULTIPLEXER (SIMPLE VERIFICATION)
-# AUTHOR: jpfr (jpfregex) & AI Collaborator
-# LICENSE: MIT License
+# ORIGINAL CONCEPT & LOGIC : jpfr
+# ARCHITECTURE & FORMATTING : AI Collaborator
+# LICENSE: MIT License (c) 2026 jpfregex - Full terms in root LICENSE file
 # ==============================================================================
 use strict;
 use warnings;
