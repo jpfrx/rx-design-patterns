@@ -4,8 +4,15 @@
 # Description : Highly customizable randomized data generator for benchmarking
 #               and stress-testing lexical parsers against structural boundaries.
 # Author      : Google AI
-# Date        : June 2026
+# Modification : jpfr (jpfrx)
+# Date        : 2026-06-29
 # License     : MIT License (https://opensource.org)
+# ==============================================================================
+# 2026-06-29 : Initial version (Google AI)
+# 2026-07-02 : Fix 0 after (jprf).
+# Expected fixes : 
+# (TBD) : Invalid data amongst the existing other types.
+# (TBD) : Check 0 valid.
 # ==============================================================================
 # This script generates realistic, randomized text blocks across 22 data types
 # (including varied date formats, numerical radices from base 2 to 16, reals,
@@ -13,8 +20,11 @@
 # to empirically stress-test parser termination boundaries and backtracking limits.
 # Examples : 
 # perl generate_stress_test.pl --blocks=3 --valid=5 --after=5 --output=small_test.txt
+# perl generate_stress_test.pl --blocks=100 --valid=5 --after=5 --output=moderate_test.txt
 # perl generate_stress_test.pl --blocks=150 --valid=4000 --after=1000 --output=medium_test.txt
-# perl generate_stress_test.pl --blocks=400 --valid=10000 --after=5000 --output=huge_stress_test.txt
+# perl generate_stress_test.pl --blocks=400 --valid=10000 --after=5000 --output=huge_test.txt
+# perl generate_stress_test.pl --blocks=400 --valid=10000 --after=0 --output=huge_test.txt
+# perl generate_stress_test.pl --blocks=65 --valid=1000 --after=0 --output=huge2_test.txt
 # ==============================================================================
 
 use strict;
@@ -136,15 +146,18 @@ for (1 .. $num_blocks) {
                       : $broken_generators{'DEFAULT'}->($current_type);
     splice(@row, int(rand(@row + 1)), 0, $broken_item);
     
-    print $out "\t" . join(" , ", @row) . " # Should NOT be captured ($broken_item rejected)\n";
+	if($lines_after>=1){
+	    print $out "\t" . join(" , ", @row) . " # Should NOT be captured ($broken_item rejected)\n";
     
-    # 3. Generate IGNORED lines (Lines trailing after the error)
-    for (1 .. $lines_after) {
-        my $num_cols = $min_items + int(rand($max_items - $min_items + 1));
-        my @row = map { $types{$current_type}->() } 1 .. $num_cols;
-        print $out "\t" . join(" , ", @row) . " # Should be ignored (previous line rejected)\n";
-    }
+	    # 3. Generate IGNORED lines (Lines trailing after the error)
+		for (1 .. $lines_after) {
+		    my $num_cols = $min_items + int(rand($max_items - $min_items + 1));
+		    my @row = map { $types{$current_type}->() } 1 .. $num_cols;
+		    print $out "\t" . join(" , ", @row) . " # Should be ignored (previous line rejected)\n";
+		}
+	}
 }
+print $out "\n";
 
 close $out;
 print "Generation complete! Total blocks: $num_blocks. Check '$output_file'.\n";

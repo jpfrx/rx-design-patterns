@@ -1,53 +1,118 @@
 #!/usr/bin/env perl
-# reset ; perl 05-JPRFX-MULTIPLEXER-nestedadvancedgate.pl 2> jpfrx-log.txt
-# md5sum file1.txt file2.txt file3.txt
 # ==============================================================================
-# ORIGINAL CONCEPT & LOGIC : jpfr (jpfrx)
+# DESIGN PATTERN: NO-PIPE MULTIPLEXER (ADVANCED BINARY GATE & ROUTING)
+# ORIGINAL CONCEPT & LOGIC : jpfr(jpfrx)
+# COMMENT & PRESENTATION : AI Assistant (Google Gemini)
 # LICENSE: MIT License (c) 2026 jpfrx - Full terms in root LICENSE file
-# NOTE : This program will be properly commented soon
+# ==============================================================================
+# 2026-06-29 : Initial version (jpfr)
+# 2026-07-02 : Renaming (jprf).
+# Expected fixes : 
+# (TBD) : More stable Nested advanced gate
+# (TBD) : New GOMACRO within perl (see https://github.com/jpfrx/rx-design-patterns/current-work/perl-evo//GOMACRO.pl)
+#         in order to inscrease speed and volume capability, see details in GOMACRO.
+# ==============================================================================
+# ARCHITECTURE & PERFORMANCE NOTE
+# ==============================================================================
+# The state retention flaw applies strictly to the initial "Flawed Multiplexer" 
+# concept. Evolved patterns successfully resolve this state corruption. 
+# Specifically, the "Nested Advanced Gate" variant delivers exceptional 
+# performance and stability, provided that the surrounding regex environment 
+# (the wrapper logic outside the router and multiplexer) remains deterministic.
 # ==============================================================================
 use strict;
 use warnings;
 use re 'eval';
 #use re 'debug';
-# reset ; /usr/bin/time -v perl 06-unoptimized-NORMAL-MULTIPLEXER.pl
-# reset ; /usr/bin/time -v perl 06-unoptimized-JPRFX-MULTIPLEXER-advancedgate-ON.pl 
-# reset ; /usr/bin/time -v perl 06-unoptimized-NORMAL-MULTIPLEXER.pl 2>20260628-16h43-06-normal-debug.txt
 
-#use re qw(Compile); 
-# not supported use the commandline instead
-#no re 'optimize';  # Disables static optimization passes in newer Perl versions
-# /usr/bin/time -v perl -Mre=debug 05-JPRFX-MULTIPLEXER-nestedadvancedgate.pl > /dev/null 2>&1
-# /usr/bin/time -v perl -Mre=no,optimize 05-JPRFX-MULTIPLEXER-nestedadvancedgate.pl
+# ARGV[0] (M) : Input file to parse
+# ARGV[1] (M) : Output file name (contains remnant of the parsed file)
+# ARGV[2] (M) : Selected Router/Multiplexer version (see bellow)
+# ARGV[3] (M) : Y/N
 
 
 
-# reset ; /usr/bin/time -v perl -Mre=debug 07-BENCHMARK.pl small_test.txt NORM-ON N 2>07-NORM-ON-debug.txt
-# reset ; /usr/bin/time -v perl -Mre=debug 07-BENCHMARK.pl small_test.txt NORM-OlogN N 2>07-NORM-OlogN-debug.txt
-# reset ; /usr/bin/time -v perl -Mre=debug 07-BENCHMARK.pl small_test.txt JPFRX-ON N 2>07-JPFRX-ON-debug.txt
-# reset ; /usr/bin/time -v perl -Mre=debug 07-BENCHMARK.pl small_test.txt JPFRX-OlogN N 2>07-JPFRX-OlogN-debug.txt
-# reset ; /usr/bin/time -v perl -Mre=debug 07-BENCHMARK.pl small_test.txt ADVG-ON N 2>07-ADVG-ON-debug.txt
-# reset ; /usr/bin/time -v perl -Mre=debug 07-BENCHMARK.pl small_test.txt ADVG-OlogN N 2>07-ADVG-OlogN-debug.txt
-# reset ; /usr/bin/time -v perl -Mre=debug 07-BENCHMARK.pl small_test.txt NADVG-OlogsqrtN N 2>07-NADVG-OlogsqrtN-debug.txt
-
-# reset ; /usr/bin/time -v perl 07-BENCHMARK.pl huge_stress_test.txt NORM-ON N
-# reset ; /usr/bin/time -v perl 07-BENCHMARK.pl huge_stress_test.txt NORM-OlogN N
-# reset ; /usr/bin/time -v perl 07-BENCHMARK.pl huge_stress_test.txt JPFRX-ON N
-# reset ; /usr/bin/time -v perl 07-BENCHMARK.pl huge_stress_test.txt JPFRX-OlogN N
-# reset ; /usr/bin/time -v perl 07-BENCHMARK.pl huge_stress_test.txt ADVG-ON N
-# reset ; /usr/bin/time -v perl 07-BENCHMARK.pl huge_stress_test.txt ADVG-OlogN N
-# reset ; /usr/bin/time -v perl 07-BENCHMARK.pl huge_stress_test.txt NADVG-OlogsqrtN N
-
+# Selected Router/Multiplexer version : 
+# ======================================
 
 # --- REGEX ASSEMBLY ---
-# NORM-ON         router_mormal_ON             multiplexer_mormal_ON
-# NORM-OlogN      router_mormal_OlogN          multiplexer_mormal_OlogN
-# JPFRX-ON        router_jpfrx_ON              multiplexer_jpfrx_ON
-# JPFRX-OlogN     router_jpfrx_logON           multiplexer_jpfrx_OlogN
-# ADVG-ON         router_advgate_ON            multiplexer_advgate_ON
-# ADVG-OlogN      router_advgate_OlogN         multiplexer_advgate_OlogN
-# NADVG-OlogsqrtN router_nestadvgate_OlogsqrtN multiplexer_nestadvgate_OlogsqrtN
+# FL-LI     flawed_router_li             flawed_multiplexer_li
+# FL-IM     flawed_router_im             flawed_multiplexer_li
+# ACFL-LI   actuallyflawed_router_li     actuallyflawed_multiplexer_li
+# ACFL-IM   actuallyflawed_router_im     actuallyflawed_multiplexer_im
+# JPFRX-LI  jpfrx_router_li              jpfrx_multiplexer_li
+# JPFRX-IM  jpfrx_router_im              jpfrx_multiplexer_im
+# ADVG-LI   jprfx_advgate_router_li      jprfx_advgate_multiplexer_li
+# ADVG-IM   jprfx_advgate_router_im      jprfx_advgate_multiplexer_im
+# NADVG-IM  jprfx_nestadvgate_router_im  jprfx_nestadvgate_multiplexer_im
 
+
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt FL-LI N 2>FL-LI-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt FL-IM N 2>FL-IM-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt ACFL-LI N 2>ACFL-LI-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt ACFL-IM N 2>ACFL-IM-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt JPFRX-LI N 2>JPFRX-LI-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt JPFRX-IM N 2>JPFRX-JPFRX-IM-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt ADVG-LI N 2>ADVG-LI-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt ADVG-IM N 2>ADVG-IM-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl small_test.txt small_result.txt NADVG-IM N 2>NADVG-IM-debug.txt
+
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt FL-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt FL-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt ACFL-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt ACFL-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt JPFRX-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt JPFRX-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt ADVG-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt ADVG-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl small_test.txt small_result.txt NADVG-IM N
+
+
+
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt FL-LI N 2>FL-LI-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt FL-IM N 2>FL-IM-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt ACFL-LI N 2>ACFL-LI-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt ACFL-IM N 2>ACFL-IM-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt JPFRX-LI N 2>JPFRX-LI-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt JPFRX-IM N 2>JPFRX-JPFRX-IM-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt ADVG-LI N 2>ADVG-LI-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt ADVG-IM N 2>ADVG-IM-debug.txt
+# reset ; /usr/bin/time -v perl -Mre=debug benchmark.pl moderate_test.txt moderate_result.txt NADVG-IM N 2>NADVG-IM-debug.txt
+
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt FL-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt FL-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt ACFL-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt ACFL-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt JPFRX-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt JPFRX-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt ADVG-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt ADVG-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl moderate_test.txt moderate_result.txt NADVG-IM N
+
+
+
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt FL-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt FL-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt ACFL-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt ACFL-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt JPFRX-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt JPFRX-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt ADVG-LI N
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt ADVG-IM N
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt NADVG-IM N
+
+
+
+
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt FL-LI Y
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt FL-IM Y
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt ACFL-LI Y
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt ACFL-IM Y
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt JPFRX-LI Y
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt JPFRX-IM Y
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt ADVG-LI Y
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt ADVG-IM Y
+# reset ; /usr/bin/time -v perl benchmark.pl huge_test.txt huge_result.txt NADVG-IM Y
 
 
 
@@ -74,22 +139,25 @@ sub read_from_file{
 
 
 
+my(${opt_flag})=$ARGV[3];
 my(${opt})='';
-if($ARGV[2] eq "N"){
-	my(${opt})='(?{})';
+
+# Disable Perl regex optimization
+if(${opt_flag} eq "N"){
+	${opt}='(?{})';
 }
-elsif($ARGV[2] eq "Y"){
-	my(${opt})='';
+elsif(${opt_flag} eq "Y"){
+	${opt}='';
 }
 else{
-	my(${opt})='';
+	${opt}='';
 }
 
 
 ################################################################################################################################
-#####  NORMAL MULTIPLEXER O(N)
+#####  FLAWED MULTIPLEXER - LINEAR
 ################################################################################################################################
-my(${router_mormal_ON})=
+my(${flawed_router_li})=
 	'(?:'.
 		'(?(DEFINE)'.
 			'(?<pp>[/\-_\w\d])'.
@@ -136,7 +204,7 @@ my(${router_mormal_ON})=
 		'|'.
 		'(?<string>(?<!(?&pp))(?i:'.${opt}.'text|'.${opt}.'default|'.${opt}.'[^:\n]+)(?!(?&pp)))'. # global else condition
 	')';
-my(${multiplexer_mormal_ON})=
+my(${flawed_multiplexer_li})=
 	'(?<m>'.
 
 		'(?(<date_yyyymmdd_dash>)'.${opt}.'\d{4,4}-\d{1,2}-\d{1,2})'.
@@ -182,11 +250,10 @@ my(${multiplexer_mormal_ON})=
 		'(?(<string>)'.${opt}.'[\d\w_\s]+)'. 
 	')';
 
-
 ################################################################################################################################
-#####  NORMAL MULTIPLEXER O(log(N))
+#####  FLAWED MULTIPLEXER - IMBRICATED
 ################################################################################################################################
-my(${router_mormal_OlogN})=
+my(${flawed_router_im})=
 	'(?:'.
 		'(?(DEFINE)'.
 			'(?<pp>[/\-_\w\d])'.
@@ -233,7 +300,7 @@ my(${router_mormal_OlogN})=
 		'|'.
 		'(?<string>(?<!(?&pp))(?i:'.${opt}.'text|'.${opt}.'default|'.${opt}.'[^:\n]+)(?!(?&pp)))'. # global else condition
 	')';
-my(${multiplexer_mormal_OlogN})=
+my(${flawed_multiplexer_im})=
 	'(?<m>'.
 
 		'(?(<date_yyyymmdd_dash>)'.${opt}.'\d{4,4}-\d{1,2}-\d{1,2}|'.
@@ -260,9 +327,181 @@ my(${multiplexer_mormal_OlogN})=
 	')';
 
 ################################################################################################################################
-#####  JPFRX MULTIPLEXER O(N)
+#####  ACTUALLY FLAWED MULTIPLEXER - LINEAR
 ################################################################################################################################
-my(${router_jpfrx_ON})=
+my(${actuallyflawed_router_li})=
+	'(?:'.
+		'(?(DEFINE)'.
+			'(?<pp>[/\-_\w\d])'.
+		')'.
+		'(?<date_yyyymmdd_dash>(?<!(?&pp))(?i:'.${opt}.'yyyy-mm-dd)(?!(?&pp)))'.
+		'|'.
+		'(?<date_yyyymmdd_slash>(?<!(?&pp))(?i:'.${opt}.'yyyy/mm/dd)(?!(?&pp)))'.
+		'|'.
+		'(?<date_ddmmyyyy_dash>(?<!(?&pp))(?i:'.${opt}.'dd-mm-yyyy)(?!(?&pp)))'.
+		'|'.
+		'(?<date_ddmmyyyy_slash>(?<!(?&pp))(?i:'.${opt}.'dd/mm/yyyy)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix16>(?<!(?&pp))(?i:'.${opt}.'hexadecimal|'.${opt}.'integer_radix16)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix15>(?<!(?&pp))(?i:'.${opt}.'pentadecimal|'.${opt}.'integer_radix15)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix14>(?<!(?&pp))(?i:'.${opt}.'tetradecimal|'.${opt}.'integer_radix14)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix13>(?<!(?&pp))(?i:'.${opt}.'tridecimal|'.${opt}.'integer_radix13)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix12>(?<!(?&pp))(?i:'.${opt}.'dozenal|'.${opt}.'duodecimal|'.${opt}.'integer_radix12)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix11>(?<!(?&pp))(?i:'.${opt}.'undecimal|'.${opt}.'integer_radix11)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix10>(?<!(?&pp))(?i:'.${opt}.'decimal|'.${opt}.'integer_radix10)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix9>(?<!(?&pp))(?i:'.${opt}.'nonary|'.${opt}.'integer_radix9)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix8>(?<!(?&pp))(?i:'.${opt}.'octal|'.${opt}.'integer_radix8)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix7>(?<!(?&pp))(?i:'.${opt}.'septenary|'.${opt}.'integer_radix7)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix6>(?<!(?&pp))(?i:'.${opt}.'senary|'.${opt}.'integer_radix6)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix5>(?<!(?&pp))(?i:'.${opt}.'quinary|'.${opt}.'integer_radix5)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix4>(?<!(?&pp))(?i:'.${opt}.'quaternary|'.${opt}.'integer_radix4)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix3>(?<!(?&pp))(?i:'.${opt}.'ternary|'.${opt}.'integer_radix3)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix2>(?<!(?&pp))(?i:'.${opt}.'binary|'.${opt}.'integer_radix2)(?!(?&pp)))'.
+		'|'.
+		'(?<real_decimal>(?<!(?&pp))(?i:'.${opt}.'real)(?!(?&pp)))'.
+		'|'.
+		'(?<string>(?<!(?&pp))(?i:'.${opt}.'text|'.${opt}.'default|'.${opt}.'[^:\n]+)(?!(?&pp)))'. # global else condition
+	')';
+my(${actuallyflawed_multiplexer_li})=
+	'(?<m>'.
+
+		'(?(<date_yyyymmdd_dash>)'.${opt}.'\d{4,4}-\d{1,2}-\d{1,2})'.
+		'|'.
+		'(?(<date_yyyymmdd_slash>)'.${opt}.'\d{4,4}/\d{1,2}/\d{1,2})'.
+		'|'.
+		'(?(<date_ddmmyyyy_dash>)'.${opt}.'\d{1,2}-\d{1,2}-\d{4,4})'.
+		'|'.
+		'(?(<date_ddmmyyyy_slash>)'.${opt}.'\d{1,2}/\d{1,2}/\d{4,4})'.
+		'|'.
+		'(?(<integer_radix16>)'.${opt}.'[0-9a-fA-F]+)'.
+		'|'.
+		'(?(<integer_radix15>)'.${opt}.'[0-9a-eA-E]+)'.
+		'|'.
+		'(?(<integer_radix14>)'.${opt}.'[0-9a-dA-D]+)'.
+		'|'.
+		'(?(<integer_radix13>)'.${opt}.'[0-9a-cA-C]+)'.
+		'|'.
+		'(?(<integer_radix12>)'.${opt}.'[0-9a-bA-B]+)'.
+		'|'.
+		'(?(<integer_radix11>)'.${opt}.'[0-9aA]+)'.
+		'|'.
+		'(?(<integer_radix10>)'.${opt}.'[0-9]+)'.
+		'|'.
+		'(?(<integer_radix9>)'.${opt}.'[0-8]+)'.
+		'|'.
+		'(?(<integer_radix8>)'.${opt}.'[0-7]+)'.
+		'|'.
+		'(?(<integer_radix7>)'.${opt}.'[0-6]+)'.
+		'|'.
+		'(?(<integer_radix6>)'.${opt}.'[0-5]+)'.
+		'|'.
+		'(?(<integer_radix5>)'.${opt}.'[0-4]+)'.
+		'|'.
+		'(?(<integer_radix4>)'.${opt}.'[0-3]+)'.
+		'|'.
+		'(?(<integer_radix3>)'.${opt}.'[0-2]+)'.
+		'|'.
+		'(?(<integer_radix2>)'.${opt}.'[01]+)'.
+		'|'.
+		'(?(<real_decimal>)(?:'.${opt}.'[0-9]*\.[0-9]+|'.${opt}.'[0-9]+\.[0-9]*))'.
+		'|'.
+		'(?(<string>)'.${opt}.'[\d\w_\s]+)'. 
+	')';
+
+################################################################################################################################
+#####  ACTUALLY FLAWED MULTIPLEXER - IMBRICATED
+################################################################################################################################
+my(${actuallyflawed_router_im})=
+	'(?:'.
+		'(?(DEFINE)'.
+			'(?<pp>[/\-_\w\d])'.
+		')'.
+		'(?<date_yyyymmdd_dash>(?<!(?&pp))(?i:'.${opt}.'yyyy-mm-dd)(?!(?&pp)))'.
+		'|'.
+		'(?<date_yyyymmdd_slash>(?<!(?&pp))(?i:'.${opt}.'yyyy/mm/dd)(?!(?&pp)))'.
+		'|'.
+		'(?<date_ddmmyyyy_dash>(?<!(?&pp))(?i:'.${opt}.'dd-mm-yyyy)(?!(?&pp)))'.
+		'|'.
+		'(?<date_ddmmyyyy_slash>(?<!(?&pp))(?i:'.${opt}.'dd/mm/yyyy)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix16>(?<!(?&pp))(?i:'.${opt}.'hexadecimal|'.${opt}.'integer_radix16)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix15>(?<!(?&pp))(?i:'.${opt}.'pentadecimal|'.${opt}.'integer_radix15)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix14>(?<!(?&pp))(?i:'.${opt}.'tetradecimal|'.${opt}.'integer_radix14)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix13>(?<!(?&pp))(?i:'.${opt}.'tridecimal|'.${opt}.'integer_radix13)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix12>(?<!(?&pp))(?i:'.${opt}.'dozenal|'.${opt}.'duodecimal|'.${opt}.'integer_radix12)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix11>(?<!(?&pp))(?i:'.${opt}.'undecimal|'.${opt}.'integer_radix11)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix10>(?<!(?&pp))(?i:'.${opt}.'decimal|'.${opt}.'integer_radix10)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix9>(?<!(?&pp))(?i:'.${opt}.'nonary|'.${opt}.'integer_radix9)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix8>(?<!(?&pp))(?i:'.${opt}.'octal|'.${opt}.'integer_radix8)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix7>(?<!(?&pp))(?i:'.${opt}.'septenary|'.${opt}.'integer_radix7)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix6>(?<!(?&pp))(?i:'.${opt}.'senary|'.${opt}.'integer_radix6)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix5>(?<!(?&pp))(?i:'.${opt}.'quinary|'.${opt}.'integer_radix5)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix4>(?<!(?&pp))(?i:'.${opt}.'quaternary|'.${opt}.'integer_radix4)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix3>(?<!(?&pp))(?i:'.${opt}.'ternary|'.${opt}.'integer_radix3)(?!(?&pp)))'.
+		'|'.
+		'(?<integer_radix2>(?<!(?&pp))(?i:'.${opt}.'binary|'.${opt}.'integer_radix2)(?!(?&pp)))'.
+		'|'.
+		'(?<real_decimal>(?<!(?&pp))(?i:'.${opt}.'real)(?!(?&pp)))'.
+		'|'.
+		'(?<string>(?<!(?&pp))(?i:'.${opt}.'text|'.${opt}.'default|'.${opt}.'[^:\n]+)(?!(?&pp)))'. # global else condition
+	')';
+my(${actuallyflawed_multiplexer_im})=
+	'(?<m>'.
+
+		'(?(<date_yyyymmdd_dash>)'.${opt}.'\d{4,4}-\d{1,2}-\d{1,2}|'.
+		'(?(<date_yyyymmdd_slash>)'.${opt}.'\d{4,4}/\d{1,2}/\d{1,2}|'.
+		'(?(<date_ddmmyyyy_dash>)'.${opt}.'\d{1,2}-\d{1,2}-\d{4,4}|'.
+		'(?(<date_ddmmyyyy_slash>)'.${opt}.'\d{1,2}/\d{1,2}/\d{4,4}|'.
+		'(?(<integer_radix16>)'.${opt}.'[0-9a-fA-F]+|'.
+		'(?(<integer_radix15>)'.${opt}.'[0-9a-eA-E]+|'.
+		'(?(<integer_radix14>)'.${opt}.'[0-9a-dA-D]+|'.
+		'(?(<integer_radix13>)'.${opt}.'[0-9a-cA-C]+|'.
+		'(?(<integer_radix12>)'.${opt}.'[0-9a-bA-B]+|'.
+		'(?(<integer_radix11>)'.${opt}.'[0-9aA]+|'.
+		'(?(<integer_radix10>)'.${opt}.'[0-9]+|'.
+		'(?(<integer_radix9>)'.${opt}.'[0-8]+|'.
+		'(?(<integer_radix8>)'.${opt}.'[0-7]+|'.
+		'(?(<integer_radix7>)'.${opt}.'[0-6]+|'.
+		'(?(<integer_radix6>)'.${opt}.'[0-5]+|'.
+		'(?(<integer_radix5>)'.${opt}.'[0-4]+|'.
+		'(?(<integer_radix4>)'.${opt}.'[0-3]+|'.
+		'(?(<integer_radix3>)'.${opt}.'[0-2]+|'.
+		'(?(<integer_radix2>)'.${opt}.'[01]+|'.
+		'(?(<real_decimal>)(?:'.${opt}.'[0-9]*\.[0-9]+|'.${opt}.'[0-9]+\.[0-9]*)|'.
+		'(?(<string>)'.${opt}.'[\d\w_\s]+)))))))))))))))))))))'. 
+	')';
+
+################################################################################################################################
+#####  JPFRX MULTIPLEXER - LINEAR
+################################################################################################################################
+my(${jpfrx_router_li})=
 	'(?:'.
 		'(?(DEFINE)'.
 			'(?<pp>[/\-_\w\d])'.
@@ -294,7 +533,7 @@ my(${router_jpfrx_ON})=
 			'(?<=(?&pp))'.
 		')'.
 	')';
-my(${multiplexer_jpfrx_ON})=
+my(${jpfrx_multiplexer_li})=
 	'(?<m>'.
 
 		'(?(<type>)'. # classic (?(patter)yes|no) form
@@ -323,9 +562,9 @@ my(${multiplexer_jpfrx_ON})=
 	')';
 
 ################################################################################################################################
-#####  JPFRX MULTIPLEXER O(log(N))
+#####  JPFRX MULTIPLEXER - IMBRICATED
 ################################################################################################################################
-my(${router_jpfrx_OlogN})=
+my(${jpfrx_router_im})=
 	'(?:'.
 		'(?(DEFINE)'.
 			'(?<pp>[/\-_\w\d])'.
@@ -357,7 +596,7 @@ my(${router_jpfrx_OlogN})=
 			'(?<=(?&pp))'.
 		')'.
 	')';
-my(${multiplexer_jpfrx_OlogN})=
+my(${jpfrx_multiplexer_im})=
 	'(?<m>'.
 
 		'(?(<type>)'.
@@ -386,17 +625,11 @@ my(${multiplexer_jpfrx_OlogN})=
 	')';
 
 
-################################################################################################################################
-#####  JPFRX MULTIPLEXER O(log(sqrt(N)))
-################################################################################################################################
-
-
-
 
 ################################################################################################################################
-##### JPFRX ADVANCED GATE O(N)
+##### JPFRX ADVANCED GATE - LINEAR
 ################################################################################################################################
-my(${router_advgate_ON})=
+my(${jprfx_advgate_router_li})=
 	'(?:'.
 		'(?(DEFINE)'.
 			'(?<pp>[/\-_\w\d])'.
@@ -429,7 +662,7 @@ my(${router_advgate_ON})=
 		'|'.
 		'(?i:'.${opt}.'text|'.${opt}.'default|'.${opt}.'[^:\n]+)'. # global else condition
 	')';
-my(${multiplexer_advgate_ON})=
+my(${jprfx_advgate_multiplexer_li})=
 	'(?<m>'.
 
 		'(?(<type>)'. # classic (?(patter)yes|no) form
@@ -459,9 +692,9 @@ my(${multiplexer_advgate_ON})=
 	')';
 
 ################################################################################################################################
-##### JPFRX ADVANCED GATE O(log(N))
+##### JPFRX ADVANCED GATE - IMBRICATED
 ################################################################################################################################
-my(${router_advgate_OlogN})=
+my(${jprfx_advgate_router_im})=
 	'(?:'.
 		'(?(DEFINE)'.
 			'(?<pp>[/\-_\w\d])'.
@@ -494,7 +727,7 @@ my(${router_advgate_OlogN})=
 		'|'.
 		'(?i:'.${opt}.'text|'.${opt}.'default|'.${opt}.'[^:\n]+)'. # global else condition
 	')';
-my(${multiplexer_advgate_OlogN})=
+my(${jprfx_advgate_multiplexer_im})=
 	'(?<m>'.
 
 		'(?(<type>)'. # classic (?(patter)yes|no) form
@@ -524,9 +757,9 @@ my(${multiplexer_advgate_OlogN})=
 	')';
 
 ################################################################################################################################
-##### JPFRX NESTED ADVANCED GATE O(log(sqrt(N))
+##### JPFRX NESTED ADVANCED GATE - IMBRICATED
 ################################################################################################################################
-my(${router_nestadvgate_OlogsqrtN})=
+my(${jprfx_nestadvgate_router_im})=
 	'(?:'.
 		'(?(DEFINE)'.
 			'(?<pp>[/\-_\w\d])'.
@@ -588,7 +821,7 @@ my(${router_nestadvgate_OlogsqrtN})=
 		'|'.
 		'(?i:'.${opt}.'text|'.${opt}.'default|'.${opt}.'[^:\n]+)'. # global else condition
 	')';
-my(${multiplexer_nestadvgate_OlogsqrtN})=
+my(${jprfx_nestadvgate_multiplexer_im})=
 	'(?<m>'.
 
 		'(?(<date>)'. # classic (?(patter)yes|no) form
@@ -636,50 +869,62 @@ my(${multiplexer_nestadvgate_OlogsqrtN})=
 
 
 
-my(${file})=$ARGV[0];
-my(${test})=read_from_file(${file});
+my(${inputfile})=$ARGV[0];
+my(${outputfile})=$ARGV[1];
+
+my(${test})=read_from_file(${inputfile});
 
 
 
 
 # --- REGEX ASSEMBLY ---
-# NORM-ON         router_mormal_ON             multiplexer_mormal_ON
-# NORM-OlogN      router_mormal_OlogN          multiplexer_mormal_OlogN
-# JPFRX-ON        router_jpfrx_ON              multiplexer_jpfrx_ON
-# JPFRX-OlogN     router_jpfrx_logON           multiplexer_jpfrx_OlogN
-# ADVG-ON         router_advgate_ON            multiplexer_advgate_ON
-# ADVG-OlogN      router_advgate_OlogN         multiplexer_advgate_OlogN
-# NADVG-OlogsqrtN router_nestadvgate_OlogsqrtN multiplexer_nestadvgate_OlogsqrtN
+# FL-LI     flawed_router_li             flawed_multiplexer_li
+# FL-IM     flawed_router_im             flawed_multiplexer_li
+# ACFL-LI   actuallyflawed_router_li     actuallyflawed_multiplexer_li
+# ACFL-IM   actuallyflawed_router_im     actuallyflawed_multiplexer_im
+# JPFRX-LI  jpfrx_router_li              jpfrx_multiplexer_li
+# JPFRX-IM  jpfrx_router_im              jpfrx_multiplexer_im
+# ADVG-LI   jprfx_advgate_router_li      jprfx_advgate_multiplexer_li
+# ADVG-IM   jprfx_advgate_router_im      jprfx_advgate_multiplexer_im
+# NADVG-IM  jprfx_nestadvgate_router_im  jprfx_nestadvgate_multiplexer_im
 my(${router})='';
 my(${multiplexer})='';
-my(${resfile})=$ARGV[0];
-if($ARGV[1] eq "NORM-ON"){
-	${router}=${router_mormal_ON};
-	${multiplexer}=${multiplexer_mormal_ON};
+my(${selected_romu})=$ARGV[2];
+if(${selected_romu} eq "FL-LI"){
+	${router}=${flawed_router_li};
+	${multiplexer}=${flawed_multiplexer_li};
 }
-elsif($ARGV[1] eq "NORM-OlogN"){
-	${router}=${router_mormal_ON};
-	${multiplexer}=${multiplexer_mormal_ON};
+elsif(${selected_romu} eq "FL-IM"){
+	${router}=${flawed_router_im};
+	${multiplexer}=${flawed_multiplexer_li};
 }
-elsif($ARGV[1] eq "JPFRX-ON"){
-	${router}=${router_jpfrx_ON};
-	${multiplexer}=${multiplexer_jpfrx_ON};
+elsif(${selected_romu} eq "ACFL-LI"){
+	${router}=${actuallyflawed_router_li};
+	${multiplexer}=${actuallyflawed_multiplexer_li};
 }
-elsif($ARGV[1] eq "JPFRX-OlogN"){
-	${router}=${router_jpfrx_OlogN};
-	${multiplexer}=${multiplexer_jpfrx_OlogN};
+elsif(${selected_romu} eq "ACFL-IM"){
+	${router}=${actuallyflawed_router_im};
+	${multiplexer}=${actuallyflawed_multiplexer_li};
 }
-elsif($ARGV[1] eq "ADVG-ON"){
-	${router}=${router_advgate_ON};
-	${multiplexer}=${multiplexer_advgate_ON};
+elsif(${selected_romu} eq "JPFRX-LI"){
+	${router}=${jpfrx_router_li};
+	${multiplexer}=${jpfrx_multiplexer_li};
 }
-elsif($ARGV[1] eq "ADVG-OlogN"){
-	${router}=${router_advgate_OlogN};
-	${multiplexer}=${multiplexer_advgate_OlogN};
+elsif(${selected_romu} eq "JPFRX-IM"){
+	${router}=${jpfrx_router_im};
+	${multiplexer}=${jpfrx_multiplexer_im};
 }
-elsif($ARGV[1] eq "NADVG-OlogsqrtN"){
-	${router}=${router_nestadvgate_OlogsqrtN};
-	${multiplexer}=${multiplexer_nestadvgate_OlogsqrtN};
+elsif(${selected_romu} eq "ADVG-LI"){
+	${router}=${jprfx_advgate_router_li};
+	${multiplexer}=${jprfx_advgate_multiplexer_li};
+}
+elsif(${selected_romu} eq "ADVG-IM"){
+	${router}=${jprfx_advgate_router_im};
+	${multiplexer}=${jprfx_advgate_multiplexer_im};
+}
+elsif(${selected_romu} eq "NADVG-IM"){
+	${router}=${jprfx_nestadvgate_router_im};
+	${multiplexer}=${jprfx_nestadvgate_multiplexer_im};
 }
 else{
 	${router}='UNKNOWN_ROUTER';
@@ -698,15 +943,17 @@ my(${regex})=
 
 # --- EXECUTION ---
 print "=== RUNNING PARAMETERS ===\n";
-print "===  - Test file : ".$ARGV[0]."\n";
-print "===  - Pattern type : ".$ARGV[1]."\n";
-print "===  - Optimization flag : ".$ARGV[2]."\n";
+print "===  - Input file : ".${inputfile}."\n";
+print "===  - Output file : ".${outputfile}."\n";
+print "===  - Pattern type : ".${selected_romu}."\n";
+print "===  - Optimization flag : ".${opt_flag}." ${opt}\n";
 
 ${test}=~s/(?s:${regex})/[GOTIT]\n/gs;
-print "--------------------\n";
+
+#print "--------------------\n";
 print "ROUTER: ${router}\n";
 print "MULTIPLEXER: ${multiplexer}\n";
 print "REGEX: ${regex}\n";
 
-write_into_file(${resfile}."_".$ARGV[1].".txt",${test});
+write_into_file(${selected_romu}."_".${outputfile},${test});
 

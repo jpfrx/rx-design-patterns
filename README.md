@@ -2,6 +2,12 @@
 
 A curated catalog of advanced, multi-engine regular expression architectural patterns. This repository focuses on non-traditional logic layouts, linear execution flows, and structural optimizations for highly complex string validation.
 
+## Deterministic Variable Architecture (RPN)
+To safely bind structural complexities directly into compiler variables without parenthetical overhead, this engine strictly enforces a context-free Reverse Polish Notation (RPN) scalar convention. 
+
+See the formal specification in [standards/variable_naming_rpn.md](./standards/variable_naming_rpn.md).
+
+
 ## 📐 Repository Structure
 
 The architectural patterns are classified by logical capabilities:
