@@ -24,11 +24,3 @@ Active development, source files, and future documentation exist exclusively at 
 
 👉 **Official Repository:** [https://codeberg.org/jpfrx/rx-design-patterns](https://codeberg.org/jpfrx/rx-design-patterns)
 
-* **For Clones & Remotes:** Update your local terminal configurations to target Codeberg directly:
-  ```bash
-  git remote set-url origin https://codeberg.org.git
-  ```
-* **For Contributions & Tracking:** No feedback, pull requests, or issues will be reviewed or hosted on this GitHub mirror. Please head over to the Codeberg repository to engage with this codebase.
-
-Thank you for respecting software freedom and independent human development!
-
