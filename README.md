@@ -1,38 +1,34 @@
-# Regular Expression Architectural Design Patterns
+# 🚀 Project Permanently Relocated to Codeberg
 
-This repository serves as a research laboratory and production-grade catalog for advanced, non-standard regular expression design patterns. Instead of treating regular expressions as simple text-matching scripts, this project weaponizes regex engines to act as hardware-emulated **Programmable Logic Arrays (PLA)** and autonomous state machines.
+This repository is **permanently moved** to [https://codeberg.org/jpfrx/rx-design-patterns](https://codeberg.org/jpfrx/rx-design-patterns). 
 
----
-
-## 👑 FEATURED PARADIGM: THE STATE-MATRIX ROUTER (SMR)
-
-> ### 📝 ARCHITECTURAL NOTE: THE OBLITERATION OF THE `/g` FLAG
-> Traditional stream tokenizers and log analyzers rely on a procedural procedural loop (`while ($text =~ m/.../g)`). This model forces the CPU to constantly context-switch between the runtime virtual machine and the regex compilation layer, inducing severe serialization overhead.
->
-> The **State-Matrix Router (SMR-ISD)** paradigm completely nullifies the need for the global flag (`/g`). By leveraging parallel truth tables and continuous downstream possessive loop matrices (`)++`), the SMR executes infinite, multi-state text analysis **natively inside a single, monolithic, local regular expression match**. The engine is entered exactly once, locking its compiled execution context in mid-air across millions of characters with zero backtracking overhead.
->
-> **Explore the Core implementation**: [`structures/state-matrix_router/`](structures/state-matrix_router/)
+The account and repository remain active solely to secure the namespace, protect project ownership, and prevent malicious impersonation.
 
 ---
 
-## 🏗️ Repository Ecosystem Layout
+### ⚖️ Why This Project Left GitHub
 
-### 1. [`structures/`](structures/) — The Architectural Catalog
-*   **[`state-matrix_router/`](structures/state-matrix_router/) (Active Production)**: Contains the flagship **SMR-ISD** 3-module pipeline engine (`input` (5) ➔ `stage` (5) ➔ `demux` (5)). Features flat, linear lookahead assertion grids `(?(<group>)(?=)|(?!))` executing real-time parallel boolean logic.
-*   **`conditional_branching/` (Legacy Archive)**: Retained strictly as an educational baseline. Features old, flawed experimental structures (like `CB-FLAWED-1x1-gate`) to demonstrate the mechanics of catastrophic backtracking and stack memory explosions.
+I initially created this repository on GitHub without full awareness of its corporate governance, shifting ethics, and deep infrastructure controversies (such as relationships with state surveillance/ICE enforcement). 
 
-### 2. [`conventions/`](conventions/) — Universal Specifications
-*   **[`FRPN-specification.md`](conventions/naming-conventions/FRPN-specification.md)**: The **Formulaic RPN Notation** protocol. A token-delimited Reverse Polish Notation grammar used to safely embed exact mathematical complexity equations (e.g., `O_D_N_1_D_d_e_x_x`) directly into valid, compiler-safe code variable names without parenthetical collisions.
+Furthermore, managing a small, independent project is a solitary human effort. Continuously auditing account settings to opt out of hidden, shifting AI-training defaults and fighting ghost modifications to corporate platforms is a waste of a maintainer's time.
 
-### 3. [`benchmark/`](benchmark/) — Empirical Trace Metrics
-*   Contains historical kernel compilation logs, performance trace assets, and raw Perl `rexdump` validation test runs comparing SMR speeds against legacy matching frameworks.
+The architecture and design patterns published in this project—such as the specialized routing matrix logic—serve as living proof that true engineering logic, structural problem-solving, and creative execution belong exclusively to human intelligence. While AI tools can provide help to analyze text or assist with formatting syntax, original algorithmic creativity remains a strictly human endeavor.
+
+To protect the intellectual property, privacy, and integrity of this work from non-consensual corporate data harvesting, this project has permanently migrated to **Codeberg**, an independent, non-profit, community-managed, and privacy-first platform.
 
 ---
 
-## 🚀 The Ultimate Frontier: Perl Core RFC Alignment
+### 📦 New Home & Navigation
 
-The monolithic text-analysis capabilities unlocked by the SMR paradigm serve as the empirical and mathematical justification for the **`PERL_STACK_RETURN_VARIABLE`** RFC.
+Active development, source files, and future documentation exist exclusively at the official home:
 
-Because SMR nullifies `/g` and locks execution inside a single matching pass, the architecture hits a rigid ceiling: captured memory registers are immutable across the match. This repository directly supports the core Perl modification proposal to introduce a native, mid-match stack return protocol, allowing regular expressions to dynamically clear memory stacks and alter evaluation topologies on the fly.
-*   **Read the Core Specification**: [`codeberg.org/jpfrx/perl-stack-return-variable`](https://codeberg.org)
+👉 **Official Repository:** [https://codeberg.org/jpfrx/rx-design-patterns](https://codeberg.org/jpfrx/rx-design-patterns)
+
+* **For Clones & Remotes:** Update your local terminal configurations to target Codeberg directly:
+  ```bash
+  git remote set-url origin https://codeberg.org.git
+  ```
+* **For Contributions & Tracking:** No feedback, pull requests, or issues will be reviewed or hosted on this GitHub mirror. Please head over to the Codeberg repository to engage with this codebase.
+
+Thank you for respecting software freedom and independent human development!
 
