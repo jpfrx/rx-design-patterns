@@ -12,7 +12,7 @@ I initially created this repository on GitHub without full awareness of its corp
 
 Furthermore, managing a small, independent project is a solitary human effort. Continuously auditing account settings to opt out of hidden, shifting AI-training defaults and fighting ghost modifications to corporate platforms is a waste of a maintainer's time.
 
-The architecture and design patterns published in this project—such as the specialized routing matrix logic—serve as living proof that true engineering logic, structural problem-solving, and creative execution belong exclusively to human intelligence. While AI tools can provide help to analyze text or assist with formatting syntax, original algorithmic creativity remains a strictly human endeavor.
+The architecture and design patterns published in this project—such as the specialized routing matrix logic—serve as living proof that true engineering logic, structural problem-solving, and creative execution are inherant to human traits that require self-training and awareness despite AI availability. While AI tools can provide help to analyze text or assist with formatting syntax, original algorithmic creativity remains a strictly human endeavor.
 
 To protect the intellectual property, privacy, and integrity of this work from non-consensual corporate data harvesting, this project has permanently migrated to **Codeberg**, an independent, non-profit, community-managed, and privacy-first platform.
 
